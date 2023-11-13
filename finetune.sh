@@ -23,7 +23,7 @@ sbatch 1> $tmpfile <<EOF
 module load python/3.9.9
 
 torchrun --nproc_per_node=$GPUS --master_port=$PORT train.py \
-    --model_name_or_path ./llama \
+    --model_name_or_path "meta-llama/Llama-2-7b-hf" \
     --data_path ./alpaca_data.json \
     --bf16 True \
     --output_dir ./output \
