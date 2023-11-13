@@ -1,6 +1,6 @@
 #!/bin/bash
 
-GPUS="1"
+GPUS="2"
 CPUS=$(( $GPUS * 32 ))
 PORT=$((1024 + RANDOM % (65535 - 1024 + 1)))
 
@@ -11,7 +11,7 @@ sbatch 1> $tmpfile <<EOF
 #SBATCH --time=2-00:00:00
 #SBATCH --ntasks=1
 #SBATCH --cpus-per-task=$CPUS
-#SBATCH --mem=64GB
+#SBATCH --mem=128GB
 #SBATCH --gres=gpu:a100:$GPUS
 #SBATCH --output=alpaca.out
 #SBATCH --error=alpaca.err
@@ -40,7 +40,7 @@ torchrun --nproc_per_node=$GPUS --master_port=$PORT train.py \
     --warmup_ratio 0.03 \
     --lr_scheduler_type "cosine" \
     --logging_steps 1 \
-    --fsdp "full_shard auto_wrap" \
+    --fsdp "full_shard auto_wrap offload" \
     --fsdp_transformer_layer_cls_to_wrap 'LlamaDecoderLayer' \
     --tf32 True
 EOF
