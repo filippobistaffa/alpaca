@@ -2,7 +2,6 @@
 
 GPUS="2"
 CPUS=$(( $GPUS * 32 ))
-PORT=$((1024 + RANDOM % (65535 - 1024 + 1)))
 
 tmpfile=$(mktemp)
 sbatch 1> $tmpfile <<EOF
@@ -11,7 +10,7 @@ sbatch 1> $tmpfile <<EOF
 #SBATCH --time=2-00:00:00
 #SBATCH --ntasks=1
 #SBATCH --cpus-per-task=$CPUS
-#SBATCH --mem=128GB
+#SBATCH --mem=246GB
 #SBATCH --gres=gpu:a100:$GPUS
 #SBATCH --output=alpaca.out
 #SBATCH --error=alpaca.err
@@ -22,7 +21,12 @@ sbatch 1> $tmpfile <<EOF
 
 module load python/3.9.9
 
-torchrun --nproc_per_node=$GPUS --master_port=$PORT train.py \
+#export TORCH_CPP_LOG_LEVEL=INFO
+#export TORCH_DISTRIBUTED_DEBUG=DETAIL
+#export NCCL_DEBUG=INFO
+#export NCCL_DEBUG_SUBSYS=INIT,P2P
+
+torchrun --nproc_per_node=$GPUS train.py \
     --model_name_or_path "meta-llama/Llama-2-7b-hf" \
     --data_path ./alpaca_data.json \
     --bf16 True \
