@@ -45,6 +45,6 @@ torchrun --nproc_per_node=$GPUS train.py \
     --lr_scheduler_type "cosine" \
     --logging_steps 1 \
     --fsdp "full_shard auto_wrap offload" \
-    --fsdp_transformer_layer_cls_to_wrap 'LlamaDecoderLayer' \
+    --fsdp_config fsdp_config.json \
     --tf32 True
 EOF
