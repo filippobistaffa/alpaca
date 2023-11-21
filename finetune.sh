@@ -1,7 +1,13 @@
 #!/bin/bash
 
 GPUS="2"
-CPUS=$(( $GPUS * 32 ))
+
+if [ "$GPUS" -gt 2 ]
+then
+    CPUS=$((GPUS * 12))
+else
+    CPUS=$((GPUS * 32))
+fi
 
 tmpfile=$(mktemp)
 sbatch 1> $tmpfile <<EOF
